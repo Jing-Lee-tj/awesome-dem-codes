@@ -1,2 +1,2 @@
 # awesome-dem-codes
-A curated collection of open-source DEM codes, tools, and resources for granular materials, geomechanics, and fault gouge simulations.
+A curated collection of reproducible DEM simulation setups and modeling cases for granular materials, geomechanics, and fault mechanics.

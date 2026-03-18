@@ -1,0 +1,4 @@
+# code
+https://zenodo.org/records/10597892
+# reference
+Lin, Z. Y., & Hatano, T. (2024). Rheology and Structure of Model Smectite Clay: Insights From Molecular Dynamics. Journal of Geophysical Research: Solid Earth, 129(9). https://doi.org/10.1029/2024JB028850

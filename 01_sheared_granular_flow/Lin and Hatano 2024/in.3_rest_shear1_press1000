@@ -1,0 +1,94 @@
+# Rest after shearing of GB Ellipsoid Model For Smectite Clay
+#
+# This script performs rest of the sheared system
+# with constant volume and constant pressure condition.
+# This script is used after previous shear under pressure 1000,
+# with strain rate larger than 0.04.
+# 
+# LAMMPS Script by Zhu-Yuan Lin (ZYL)
+# Department of Earth and Space Science, Osaka University
+# Toyonaka, Osaka 560-0043, Japan
+#
+# This study was supported by JSPS KAKENHI Grant JP21H05201, 22H01145 
+# and JST SPRING Grant JPMJSP2138. Additional support from the MEXT 
+# Program: Data Creation and Utilization-Type Material Research and 
+# Development Project Grant Number JPMXP1122684766 and “Earthquake and 
+# Volcano Hazards Observation and Research Program” are also gratefully 
+# acknowledged.
+#
+#---------------------------------------------------
+clear
+
+# read a restart file generated from shear simulation
+# change the file name ("mix4000_shear1.restart")
+read_restart    mix4000_shear1.restart
+
+variable        kk equal 1/6
+
+neighbor	0.2 bin
+neigh_modify	delay 0 every 1 check yes one 4000
+
+# compute temperature and pressure
+compute         temp_trans all temp
+variable        dof equal count(big)
+compute         temp_rottrans all temp/asphere dof all
+
+compute         temp_rot all temp/asphere dof rotate
+
+compute         pres_trans all pressure temp_trans
+
+compute         p_e all pe
+compute         ke_t all ke
+compute         ke_r all erotate/asphere
+
+# setting temperature and pressure control 
+# Here use nve/asphere for no pressure control,
+# system volume is constant during rest.
+fix             4 all nve/asphere
+
+# For pressure control, comment fix nve/asphere command above.
+# Uncomment fix nph/asphere and fix modify command below.
+#fix             4 all nph/asphere z 1000.0 1000.0 0.25
+#fix_modify      4 press pres_trans
+
+fix             1 big langevin 1.75 1.75 0.025 498094 angmom 1.0
+fix_modify      1 temp temp_rottrans
+
+# output setting
+variable        volume equal vol
+variable        lenzz equal lz
+variable        lenxz equal xz
+variable        realg equal xz/lz
+
+compute         orient all property/atom quati quatj quatk quatw
+compute         diameter all property/atom shapex shapey shapez 
+
+# formatting log file output
+thermo_style	custom step c_temp_rottrans c_temp_trans c_temp_rot pe pzz pxz lz xz v_disp c_ke_t c_ke_r
+thermo		1000
+
+# RUN SIMULATION
+
+reset_timestep  0
+
+# formatting time-averaged value output 
+fix             3 all ave/time 1 100 100 v_volume c_pres_trans[1] c_pres_trans[2] c_pres_trans[3] c_pres_trans[5] c_p_e c_ke_t c_ke_r v_lenzz v_lenxz v_disp file mix4000_rest_shear1.avg
+
+# formatting dump file output 
+dump		1 all custom 10000 mix4000_rest_shear1.dump id type x y z &
+                   c_orient[1] c_orient[2] c_orient[3] c_orient[4] &
+                   c_diameter[1] c_diameter[2] c_diameter[3]
+
+# define simulation time step                
+timestep        0.00025
+
+# run the simulation for t*=1000
+run             4000000
+
+# store restart file
+change the file name ("mix4000_rest_shear1.restart")
+write_restart   mix4000_rest_shear1.restart
+undump          1
+unfix           1
+unfix           3
+

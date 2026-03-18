@@ -1,0 +1,8 @@
+# code
+https://data.mendeley.com/datasets/pphkhf72r5/1
+
+# reference
+Casas, N., Mollon, G., & Daouadji, A. (2023). Influence of Grain-Scale 
+Properties on Localization Patterns and Slip Weakening Within Dense 
+Granular Fault Gouges. Journal of Geophysical Research: Solid Earth, 
+128(3), 1–23. https://doi.org/10.1029/2022JB025666
